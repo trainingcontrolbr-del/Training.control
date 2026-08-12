@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin - FichaEPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-dark: #3730A3;
+    --sidebar-bg: #0F1B3D;
+    --fundo: #F8F9FC;
+    --surface: #FFFFFF;
+    --borda: #E2E5EC;
+    --texto-suave: #697386;
+    --destaque: #F7194B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fundo);
+    color: var(--sidebar-bg);
+  }
+
+  /* ---- Tela de login (Super Admin) ---- */
+  .tela-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sidebar-bg);
+    padding: 16px;
+  }
+  .card-login {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .brand-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.3rem; font-weight: 700;
+  }
+  .card-login h1 { font-size: 1.2rem; margin: 0 0 6px; }
+  .card-login p { color: var(--texto-suave); font-size: 0.88rem; margin: 0 0 24px; }
+  #g_id_signin { display: flex; justify-content: center; margin-bottom: 14px; }
+  #status-login-admin { font-size: 0.88rem; min-height: 20px; }
+  #status-login-admin.erro { color: var(--destaque); }
+
+  /* ---- Painel principal ---- */
+  .app-shell { display: none; min-height: 100vh; }
+  .sidebar-nova {
+    width: 250px; flex-shrink: 0; background: var(--sidebar-bg); color: #c7c9d9;
+    padding: 24px 16px; display: flex; flex-direction: column;
+  }
+  .sidebar-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; }
+  .sidebar-brand .brand-icon { width: 38px; height: 38px; font-size: 1rem; margin: 0; }
+  .sidebar-brand span { font-size: 1.05rem; font-weight: 700; color: #fff; }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    background: none; border: none; color: #c7c9d9; padding: 11px 12px; border-radius: 10px;
+    font-size: 0.92rem; font-weight: 500; cursor: pointer; margin-bottom: 2px; font-family: inherit;
+  }
+  .sidebar-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .sidebar-link.ativo { background: var(--primary); color: #fff; font-weight: 600; }
+
+  .main-area { flex: 1; min-width: 0; padding: 28px 32px 60px; }
+  .main-area h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .main-area p.subtitulo { color: var(--texto-suave); margin: 0 0 24px; font-size: 0.92rem; }
+
+  .cartao { background: var(--surface); border: 1px solid var(--borda); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+  .cartao h2 { font-size: 1.05rem; margin: 0 0 16px; }
+
+  label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; margin-top: 12px; }
+  input[type="text"], input[type="email"] {
+    width: 100%; height: 46px; border-radius: 10px; border: 1.5px solid var(--borda);
+    padding: 0 14px; font-size: 0.92rem; font-family: inherit;
+  }
+  input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .botao {
+    border: none; border-radius: 10px; padding: 12px 18px; font-size: 0.92rem;
+    font-weight: 600; cursor: pointer;
+  }
+  .botao.primario { width: 100%; background: var(--destaque); color: white; padding: 14px; margin-top: 18px; }
+  .botao.primario:disabled { opacity: 0.5; }
+  .botao.secundario { background: white; border: 1px solid var(--borda); color: var(--sidebar-bg); }
+
+  .resultado { margin-top: 14px; padding: 12px; border-radius: 10px; font-size: 0.88rem; }
+  .resultado:not(:empty) { background: #e9f9ef; border: 1px solid #b7ecc8; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--borda); font-size: 0.88rem; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.76rem; font-weight: 600; }
+  .badge.ativo { background: #d4edda; color: #155724; }
+  .badge.inativo { background: #f8d7da; color: #721c24; }
+  .botao-pequeno { font-size: 0.78rem !important; padding: 5px 10px !important; }
+
+  /* ---- Responsivo (celular) ---- */
+  @media (max-width: 768px) {
+    .app-shell { flex-direction: column; }
+    .sidebar-nova {
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 14px 16px;
+      gap: 6px;
+    }
+    .sidebar-brand { margin-bottom: 0; margin-right: auto; }
+    .sidebar-link { width: auto; margin-bottom: 0; padding: 9px 12px; }
+    .main-area { padding: 20px 16px 40px; }
+    .main-area h1 { font-size: 1.3rem; }
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="tela-login" id="tela-login">
+    <div class="card-login">
+      <div class="brand-icon">SA</div>
+      <h1>Super Admin</h1>
+      <p>Área restrita — gestão de clientes da plataforma FichaEPI</p>
+      <div id="g_id_signin"></div>
+      <p id="status-login-admin"></p>
+    </div>
+  </div>
+
+  <div class="app-shell" id="app-shell">
+    <aside class="sidebar-nova">
+      <div class="sidebar-brand">
+        <div class="brand-icon">SA</div>
+        <span>Super Admin</span>
+      </div>
+      <button type="button" class="sidebar-link ativo" data-painel="painel-novo">➕ Novo Cliente</button>
+      <button type="button" class="sidebar-link" data-painel="painel-lista">🏢 Todos os Clientes</button>
+    </aside>
+
+    <div class="main-area">
+      <h1>Gestão de Clientes</h1>
+      <p class="subtitulo">Cadastre novos clientes e gerencie os existentes</p>
+
+      <section id="painel-novo" class="painel">
+        <div class="cartao">
+          <h2>Cadastrar novo cliente</h2>
+          <form id="form-cliente">
+            <label for="c-nome">Nome da empresa</label>
+            <input type="text" id="c-nome" required placeholder="Ex: Arranha Céu LTDA">
+
+            <div class="grid-2">
+              <div>
+                <label for="c-cnpj">CNPJ</label>
+                <input type="text" id="c-cnpj" placeholder="00.000.000/0001-00">
+              </div>
+              <div>
+                <label for="c-plano">Plano</label>
+                <input type="text" id="c-plano" placeholder="Padrão" value="Padrão">
+              </div>
+            </div>
+
+            <label for="c-email">E-mail Google do administrador do cliente</label>
+            <input type="email" id="c-email" required placeholder="rh@empresacliente.com">
+
+            <button type="submit" class="botao primario">Criar cliente</button>
+          </form>
+          <div id="resultado-cliente" class="resultado"></div>
+        </div>
+      </section>
+
+      <section id="painel-lista" class="painel" style="display:none;">
+        <div class="cartao">
+          <h2>Clientes cadastrados</h2>
+          <table>
+            <thead>
+              <tr><th>Empresa</th><th>E-mail admin</th><th>Plano</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="corpo-tabela-clientes">
+              <tr><td colspan="5">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
