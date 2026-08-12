@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de EPI - FichaEPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-dark: #3730A3;
+    --sidebar-bg: #0F1B3D;
+    --fundo: #F8F9FC;
+    --surface: #FFFFFF;
+    --borda: #E2E5EC;
+    --texto-suave: #697386;
+    --destaque: #F7194B;
+    --verde: #25d366;
+    --shadow-soft: 0 4px 24px rgba(15,27,61,0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fundo);
+    color: var(--sidebar-bg);
+  }
+
+  .app-shell { display: flex; min-height: 100vh; align-items: flex-start; }
+
+  .sidebar-nova {
+    width: 260px; flex-shrink: 0; background: var(--sidebar-bg); color: #c7c9d9;
+    padding: 24px 16px; display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .brand-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
+  }
+  .brand-icon svg { width: 20px; height: 20px; }
+  .sidebar-brand span { font-size: 1.05rem; font-weight: 700; color: #fff; }
+  .sidebar-empresa {
+    background: rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px;
+    font-size: 0.82rem; color: #c7c9d9; margin-bottom: 20px;
+  }
+  .sidebar-empresa strong { display: block; color: #fff; font-size: 0.88rem; }
+
+  .sidebar-label {
+    display: block; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #6b7492; margin: 14px 8px 8px; font-weight: 700;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    background: none; border: none; color: #c7c9d9; text-decoration: none; padding: 11px 12px;
+    border-radius: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; margin-bottom: 2px;
+    font-family: inherit;
+  }
+  .sidebar-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .sidebar-link.ativo { background: var(--primary); color: #fff; font-weight: 600; }
+  .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .sidebar-footer { margin-top: auto; }
+  .botao-sair {
+    width: 100%; background: none; border: 1px solid rgba(255,255,255,0.15); color: #c7c9d9;
+    padding: 10px; border-radius: 10px; font-size: 0.85rem; cursor: pointer; font-family: inherit;
+  }
+  .botao-sair:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+
+  .main-area { flex: 1; min-width: 0; padding: 28px 32px 60px; }
+  .topbar h1 { margin: 0; font-size: 1.5rem; }
+  .topbar p { margin: 2px 0 20px; color: var(--texto-suave); font-size: 0.9rem; }
+
+  .footer-suporte { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--borda); display: flex; justify-content: center; }
+  .footer-suporte .popover-suporte { top: auto; bottom: calc(100% + 10px); right: auto; left: 50%; transform: translateX(-50%); }
+
+  .suporte-wrapper { position: relative; flex-shrink: 0; }
+  .btn-suporte {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 16px; border-radius: 999px;
+    background: var(--surface); border: 1.5px solid var(--borda); color: var(--primary);
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit;
+    white-space: nowrap;
+  }
+  .btn-suporte:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .btn-suporte svg { width: 18px; height: 18px; }
+
+  .popover-suporte {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    background: var(--sidebar-bg); color: #fff; padding: 16px 18px; border-radius: 14px;
+    font-size: 0.85rem; line-height: 1.5; width: 240px;
+    box-shadow: 0 12px 32px rgba(15,27,61,0.35);
+    display: none; z-index: 30;
+  }
+  .popover-suporte.aberto { display: block; }
+  .popover-suporte a { color: #fff; font-weight: 700; text-decoration: underline; display: inline-block; margin-top: 6px; }
+
+  .cartao { background: var(--surface); border: 1px solid var(--borda); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow-soft); }
+  .cartao h2 { font-size: 1.05rem; margin: 0 0 16px; display: flex; align-items: center; gap: 8px; }
+  .cartao h2 svg { width: 18px; height: 18px; color: var(--primary); }
+
+  label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
+  select, input[type="text"] {
+    width: 100%; height: 46px; border-radius: 10px; border: 1.5px solid var(--borda);
+    padding: 0 14px; font-size: 0.92rem; font-family: inherit; background: white;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
+  .ajuda { color: var(--texto-suave); font-size: 0.85rem; margin: 6px 0 0; }
+
+  .tabela-itens-epi { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+  .linha-item-epi {
+    display: grid; grid-template-columns: 2fr 1fr 80px 32px; gap: 8px; align-items: center;
+  }
+  .linha-item-epi.cabecalho { font-size: 0.78rem; font-weight: 600; color: var(--texto-suave); padding: 0 2px; }
+  .linha-item-epi input[type="text"] { height: 44px; }
+  .linha-item-epi input[type="checkbox"] { width: 18px; height: 18px; justify-self: center; }
+  .btn-remover-item { background: none; border: none; color: var(--destaque); font-size: 1.1rem; cursor: pointer; padding: 4px; }
+  .label-campo-mobile { display: none; }
+
+  .botao { border: none; border-radius: 10px; padding: 12px 18px; font-size: 0.92rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+  .botao.primario { width: 100%; background: var(--destaque); color: white; height: 50px; margin-top: 16px; font-size: 1rem; }
+  .botao.primario:disabled { opacity: 0.5; }
+  .botao.secundario { background: white; border: 1px solid var(--borda); color: var(--sidebar-bg); }
+  .botao.whatsapp { width: 100%; background: var(--verde); color: white; height: 46px; margin-top: 8px; text-decoration: none; }
+  .botao.cancelar { width: 100%; background: white; border: 1px solid var(--destaque); color: var(--destaque); height: 46px; margin-top: 8px; }
+
+  .campo-link { display: flex; gap: 8px; margin: 10px 0; }
+  .campo-link input { flex: 1; font-size: 0.82rem; color: var(--texto-suave); }
+
+  @media (max-width: 900px) {
+    .app-shell { flex-direction: column; }
+    .sidebar-nova { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; align-items: center; }
+    .sidebar-brand { margin-bottom: 0; margin-right: auto; }
+    .sidebar-empresa, .sidebar-label, .sidebar-footer { display: none; }
+    .main-area { padding: 20px 16px 50px; }
+
+    .linha-item-epi.cabecalho { display: none; }
+    .linha-item-epi {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding-bottom: 14px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--borda);
+    }
+    .label-campo-mobile {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--texto-suave);
+      margin-top: 6px;
+    }
+    .linha-item-epi input[type="checkbox"] { justify-self: start; }
+    .btn-remover-item { justify-self: end; margin-top: -34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar-nova">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i data-lucide="shield-check"></i></div>
+      <span>Ficha<strong>EPI</strong></span>
+    </div>
+    <div class="sidebar-empresa">
+      Você está em:
+      <strong id="nome-empresa-sidebar">Carregando...</strong>
+    </div>
+
+    <span class="sidebar-label">Menu</span>
+    <a href="epi.html" class="sidebar-link ativo"><i data-lucide="clipboard-list"></i> Registro de EPI</a>
+    <a href="painel.html" class="sidebar-link"><i data-lucide="users"></i> Cadastro de Funcionário</a>
+
+    <div class="sidebar-footer">
+      <button type="button" class="botao-sair" id="btn-sair">Sair</button>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <h1>Registro de EPI</h1>
+      <p>Gerar link de assinatura para o funcionário</p>
+    </header>
+
+    <main>
+      <div class="cartao">
+        <form id="form-ficha">
+          <h2><i data-lucide="user"></i> 1. Funcionário</h2>
+          <label for="select-funcionario">Selecione o funcionário</label>
+          <select id="select-funcionario" required>
+            <option value="">Carregando...</option>
+          </select>
+          <p class="ajuda" id="aviso-email"></p>
+
+          <h2 style="margin-top:28px;"><i data-lucide="hard-hat"></i> 2. Itens de EPI entregues</h2>
+          <div class="tabela-itens-epi">
+            <div class="linha-item-epi cabecalho">
+              <span>EPI</span><span>CA</span><span>Devolução</span><span></span>
+            </div>
+            <div id="linhas-itens-epi"></div>
+          </div>
+          <p class="ajuda">Caso o EPI não possua CA (Certificado de Aprovação), digite <strong>N/A</strong> no campo.</p>
+          <button type="button" id="btn-add-item" class="botao secundario" style="margin-top:8px;">+ Adicionar item</button>
+          <datalist id="lista-nomes-epi"></datalist>
+
+          <button type="submit" id="btn-gerar" class="botao primario"><i data-lucide="link"></i> Gerar link de assinatura</button>
+        </form>
+      </div>
+
+      <div id="resultado-link" class="cartao" style="display:none;">
+        <h2>✅ Ficha criada — pendente de assinatura</h2>
+        <p class="ajuda">Envie este link para o celular do funcionário assinar:</p>
+        <div class="campo-link">
+          <input type="text" id="input-link" readonly>
+          <button type="button" id="btn-copiar" class="botao secundario">Copiar</button>
+        </div>
+        <a id="btn-whatsapp" class="botao whatsapp" target="_blank">📲 Enviar por WhatsApp</a>
+        <button type="button" id="btn-cancelar-ficha" class="botao cancelar">🗑️ Cancelar esta ficha (foi criada por engano)</button>
+        <p id="status-cancelamento" class="ajuda"></p>
+      </div>
+    </main>
+
+    <footer class="footer-suporte">
+      <div class="suporte-wrapper">
+        <button type="button" class="btn-suporte" id="btn-precisa-ajuda">
+          <i data-lucide="help-circle"></i> Precisa de ajuda?
+        </button>
+        <div class="popover-suporte" id="popover-suporte">
+          Entre em contato com o suporte:
+          <a href="mailto:fichaepidigital@gmail.com">fichaepidigital@gmail.com</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="epi.js"></script>
+<script>
+  lucide.createIcons();
+  const btnAjuda = document.getElementById('btn-precisa-ajuda');
+  const popoverAjuda = document.getElementById('popover-suporte');
+  if (btnAjuda && popoverAjuda) {
+    btnAjuda.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popoverAjuda.classList.toggle('aberto');
+    });
+    document.addEventListener('click', (e) => {
+      if (!popoverAjuda.contains(e.target) && e.target !== btnAjuda) {
+        popoverAjuda.classList.remove('aberto');
+      }
+    });
+  }
+</script>
+</body>
+</html>
