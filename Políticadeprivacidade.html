@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidade — FichaEPI</title>
+<style>
+  :root{
+    --bg: #0e1220;
+    --bg-panel: #141a2e;
+    --ink: #e7e9f3;
+    --ink-dim: #9aa1bd;
+    --line: #262e4a;
+    --accent: #7c6fea;
+    --accent-soft: rgba(124,111,234,0.12);
+    --safety: #f5b83d;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(124,111,234,0.16), transparent 60%),
+      radial-gradient(800px 400px at -10% 20%, rgba(245,184,61,0.06), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--accent); text-decoration: none; }
+  a:hover, a:focus-visible{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---------- Header ---------- */
+  header{
+    position: sticky; top:0; z-index: 10;
+    background: rgba(14,18,32,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner{
+    max-width: 920px; margin:0 auto;
+    padding: 18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .brand-mark{
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #4f46c9);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 6px 18px -6px rgba(124,111,234,0.6);
+  }
+  .brand-mark svg{ width:16px; height:16px; }
+  .brand small{
+    display:block; font-family: var(--sans); font-size: 0.68rem;
+    color: var(--ink-dim); font-weight: 500; letter-spacing: 0.03em;
+  }
+  header nav a{
+    font-size: 0.85rem; color: var(--ink-dim); margin-left: 20px;
+  }
+  header nav a:hover{ color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width: 920px; margin: 0 auto;
+    padding: 64px 24px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--safety);
+    background: rgba(245,184,61,0.08);
+    border: 1px solid rgba(245,184,61,0.25);
+    padding: 5px 12px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background: var(--safety);
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2rem, 4.4vw, 2.9rem);
+    line-height: 1.15;
+    margin: 0 0 16px;
+    color: #fff;
+  }
+  .hero p.lede{
+    font-size: 1.05rem;
+    color: var(--ink-dim);
+    max-width: 60ch;
+    margin: 0 0 20px;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap: 10px 28px;
+    font-size: 0.82rem; color: var(--ink-dim);
+    padding-top: 18px; border-top: 1px dashed var(--line);
+  }
+  .meta-row strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width: 920px; margin: 0 auto;
+    padding: 48px 24px 100px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 760px){
+    .layout{ grid-template-columns: 1fr; }
+    aside{ display:none; }
+  }
+
+  aside{ position: sticky; top: 90px; }
+  aside .toc-label{
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 14px; font-weight: 600;
+  }
+  aside ol{
+    list-style: none; margin:0; padding:0;
+    counter-reset: toc;
+    border-left: 1px solid var(--line);
+  }
+  aside li{ counter-increment: toc; }
+  aside a{
+    display:block; font-size: 0.83rem; color: var(--ink-dim);
+    padding: 7px 0 7px 16px; margin-left: -1px;
+    border-left: 1px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  aside a::before{
+    content: counter(toc, decimal-leading-zero) "  ";
+    color: var(--accent); font-variant-numeric: tabular-nums;
+    font-weight: 600; margin-right: 2px;
+  }
+  aside a:hover{ color: var(--ink); text-decoration:none; border-left-color: var(--accent); }
+
+  main section{
+    padding-bottom: 34px; margin-bottom: 34px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 90px;
+  }
+  main section:last-child{ border-bottom:none; margin-bottom:0; }
+
+  main h2{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.32rem;
+    color: #fff;
+    display:flex; align-items:baseline; gap:12px;
+    margin: 0 0 14px;
+  }
+  main h2 .num{
+    font-family: var(--sans);
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 3px 8px;
+  }
+  main h3{
+    font-size: 0.95rem; font-weight: 600; color: var(--ink);
+    margin: 22px 0 8px;
+  }
+  main p{ color: #c7cbe0; margin: 0 0 14px; }
+  main ul{ margin: 0 0 14px; padding-left: 20px; color: #c7cbe0; }
+  main li{ margin-bottom: 6px; }
+  main li::marker{ color: var(--accent); }
+
+  .callout{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--safety);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 0.9rem;
+    color: #d8dbec;
+    margin: 4px 0 18px;
+  }
+  .callout strong{ color: #fff; }
+
+  .contact-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    display:flex; align-items:center; gap:18px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .contact-card div p{ margin:0; }
+  .contact-card .contact-name{ color:#fff; font-weight:600; margin-bottom:4px !important; }
+  .contact-card a.btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem; font-weight: 600;
+    white-space: nowrap;
+  }
+  .contact-card a.btn:hover{ background:#8f83ee; text-decoration:none; }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 28px 24px 40px;
+  }
+  footer .footer-inner{
+    max-width: 920px; margin:0 auto;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size: 0.78rem; color: var(--ink-dim);
+  }
+
+  ::selection{ background: rgba(124,111,234,0.35); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9 12l2 2 4-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>FichaEPI<small>Azuris — Soluções em SST</small></span>
+    </div>
+    <nav>
+      <a href="https://fichaepidigital-wq.github.io/fichaepi-saas/">Voltar ao site</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">Documento legal</span>
+  <h1>Política de Privacidade</h1>
+  <p class="lede">Como o FichaEPI coleta, usa e protege as informações de empresas, funcionários e visitantes da plataforma.</p>
+  <div class="meta-row">
+    <span><strong>Controlador:</strong> Azuris - Soluções em SST</span>
+    <span><strong>Última atualização:</strong> 10 de agosto de 2026</span>
+    <span><strong>Contato:</strong> <a href="mailto:fichaepidigital@gmail.com">fichaepidigital@gmail.com</a></span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside>
+    <div class="toc-label">Neste documento</div>
+    <ol>
+      <li><a href="#quem-somos">Quem somos</a></li>
+      <li><a href="#dados-coletados">Dados coletados</a></li>
+      <li><a href="#uso-dos-dados">Uso dos dados</a></li>
+      <li><a href="#compartilhamento">Compartilhamento</a></li>
+      <li><a href="#seguranca">Armazenamento e segurança</a></li>
+      <li><a href="#retencao">Retenção</a></li>
+      <li><a href="#direitos">Seus direitos</a></li>
+      <li><a href="#cookies">Cookies e sessão</a></li>
+      <li><a href="#google">Dados do Google</a></li>
+      <li><a href="#alteracoes">Alterações</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ol>
+  </aside>
+
+  <main>
+    <section id="quem-somos">
+      <h2><span class="num">01</span>Quem somos</h2>
+      <p>O <strong>FichaEPI</strong> é uma plataforma digital para gestão de Equipamentos de Proteção Individual (EPI), operada por <strong>Azuris - Soluções em SST</strong>. Permitimos que empresas cadastrem funcionários, registrem a entrega de EPIs e obtenham a assinatura eletrônica de fichas de entrega, conforme exigido pela legislação de Segurança e Saúde no Trabalho.</p>
+      <p>Ao utilizar o FichaEPI, você concorda com as práticas descritas nesta política.</p>
+    </section>
+
+    <section id="dados-coletados">
+      <h2><span class="num">02</span>Quais dados coletamos</h2>
+
+      <h3>Dados da empresa-cliente</h3>
+      <ul>
+        <li>Nome da empresa e dados cadastrais</li>
+        <li>Nome e e-mail do responsável pela conta (administrador)</li>
+      </ul>
+
+      <h3>Dados de autenticação (login com Google)</h3>
+      <p>Utilizamos a autenticação do Google (OAuth) apenas para verificar sua identidade. Coletamos exclusivamente nome, e-mail e foto de perfil, quando disponível.</p>
+      <div class="callout"><strong>Importante:</strong> não acessamos e-mails, arquivos do Google Drive, agenda ou qualquer outro dado da sua conta Google além das informações básicas de login.</div>
+
+      <h3>Dados dos funcionários cadastrados pela empresa-cliente</h3>
+      <p>As empresas-clientes podem cadastrar, sob sua própria responsabilidade como controladoras desses dados:</p>
+      <ul>
+        <li>Nome completo, cargo/função, e-mail e telefone</li>
+        <li>Registro de EPIs entregues (equipamento, CA, data de entrega, devolução)</li>
+        <li>Assinatura eletrônica das fichas de entrega</li>
+      </ul>
+
+      <h3>Dados de uso</h3>
+      <p>Podemos coletar automaticamente data e hora de acesso, endereço IP e tipo de navegador, para fins de segurança e melhoria do serviço.</p>
+    </section>
+
+    <section id="uso-dos-dados">
+      <h2><span class="num">03</span>Como usamos os dados</h2>
+      <ul>
+        <li>Autenticar e autorizar o acesso à plataforma</li>
+        <li>Permitir o cadastro e gerenciamento de funcionários e EPIs</li>
+        <li>Gerar fichas de entrega de EPI e capturar a assinatura eletrônica</li>
+        <li>Gerar documentos em PDF como comprovante de entrega</li>
+        <li>Isolar e proteger os dados de cada empresa-cliente (arquitetura multi-tenant)</li>
+        <li>Cumprir obrigações legais relacionadas à Segurança e Saúde no Trabalho</li>
+        <li>Prestar suporte técnico e melhorar a plataforma</li>
+      </ul>
+    </section>
+
+    <section id="compartilhamento">
+      <h2><span class="num">04</span>Compartilhamento de dados</h2>
+      <p>Não vendemos, alugamos ou compartilhamos dados pessoais com terceiros para fins comerciais.</p>
+      <p>Os dados podem ser compartilhados apenas:</p>
+      <ul>
+        <li>Com provedores de infraestrutura que hospedam a plataforma (Google Workspace/Apps Script), estritamente para viabilizar o funcionamento do serviço</li>
+        <li>Quando exigido por lei, ordem judicial ou autoridade competente</li>
+      </ul>
+      <p>Cada empresa-cliente tem acesso exclusivo aos dados de seus próprios funcionários; não há compartilhamento de dados entre empresas-clientes distintas.</p>
+    </section>
+
+    <section id="seguranca">
+      <h2><span class="num">05</span>Armazenamento e segurança</h2>
+      <p>Os dados são armazenados em infraestrutura do Google (Google Sheets/Drive, via Google Apps Script), com isolamento lógico por empresa-cliente. Adotamos medidas técnicas e organizacionais razoáveis para proteger os dados contra acesso não autorizado, perda ou alteração indevida.</p>
+      <p>Nenhum sistema é 100% livre de riscos; em caso de incidente de segurança relevante, comunicaremos os usuários afetados conforme exigido pela legislação aplicável.</p>
+    </section>
+
+    <section id="retencao">
+      <h2><span class="num">06</span>Retenção dos dados</h2>
+      <p>Os dados são mantidos enquanto a empresa-cliente mantiver sua conta ativa, ou pelo período exigido pela legislação trabalhista e de SST para comprovação de entrega de EPIs. Após o encerramento da conta, os dados poderão ser eliminados ou anonimizados, exceto quando sua retenção for exigida por lei.</p>
+    </section>
+
+    <section id="direitos">
+      <h2><span class="num">07</span>Seus direitos</h2>
+      <p>Nos termos da Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018), você tem direito a:</p>
+      <ul>
+        <li>Confirmar a existência de tratamento de seus dados</li>
+        <li>Acessar seus dados</li>
+        <li>Corrigir dados incompletos, inexatos ou desatualizados</li>
+        <li>Solicitar anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade com a lei</li>
+        <li>Solicitar a portabilidade dos dados</li>
+        <li>Revogar o consentimento, quando aplicável</li>
+      </ul>
+      <p>Caso você seja funcionário de uma empresa-cliente, algumas solicitações podem precisar ser direcionadas também à própria empresa, que é a controladora dos seus dados cadastrais no sistema.</p>
+    </section>
+
+    <section id="cookies">
+      <h2><span class="num">08</span>Cookies e tecnologias de sessão</h2>
+      <p>O FichaEPI utiliza armazenamento de sessão do navegador (<code>sessionStorage</code>) para manter você autenticado durante o uso da plataforma. Esses dados são apagados automaticamente ao encerrar a sessão ou fazer logout, e não são utilizados para rastreamento publicitário.</p>
+    </section>
+
+    <section id="google">
+      <h2><span class="num">09</span>Uso de dados do Google (OAuth)</h2>
+      <p>O uso das informações obtidas por meio do login com Google segue as <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Políticas de Dados do Usuário dos Serviços de API do Google</a>, incluindo os requisitos de Uso Limitado (Limited Use). O FichaEPI utiliza os dados de autenticação do Google exclusivamente para identificar o usuário e conceder acesso à plataforma correspondente à sua empresa.</p>
+    </section>
+
+    <section id="alteracoes">
+      <h2><span class="num">10</span>Alterações nesta política</h2>
+      <p>Esta Política de Privacidade pode ser atualizada periodicamente. A data da última atualização estará sempre indicada no topo deste documento. Em caso de alterações relevantes, poderemos notificar os usuários por e-mail ou por aviso na própria plataforma.</p>
+    </section>
+
+    <section id="contato">
+      <h2><span class="num">11</span>Contato</h2>
+      <p>Em caso de dúvidas sobre esta Política de Privacidade ou sobre o tratamento de seus dados, entre em contato:</p>
+      <div class="contact-card">
+        <div>
+          <p class="contact-name">Azuris - Soluções em SST</p>
+          <p>fichaepidigital@gmail.com</p>
+        </div>
+        <a class="btn" href="mailto:fichaepidigital@gmail.com">Enviar e-mail →</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Azuris - Soluções em SST. Todos os direitos reservados.</span>
+    <span>FichaEPI — Gestão digital de EPI</span>
+  </div>
+</footer>
+
+</body>
+</html>
