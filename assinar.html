@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assinar - FichaEPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --sidebar-bg: #0F1B3D;
+    --fundo: #F8F9FC;
+    --borda: #E2E5EC;
+    --texto-suave: #697386;
+    --destaque: #F7194B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fundo);
+    color: var(--sidebar-bg);
+  }
+  .topo {
+    background: var(--sidebar-bg);
+    color: white;
+    padding: 24px 16px;
+    text-align: center;
+  }
+  .topo h1 { margin: 0 0 4px; font-size: 1.3rem; }
+  .topo p { margin: 0; color: #c7c9d9; font-size: 0.88rem; }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .cartao {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .cartao h2 { font-size: 1rem; margin: 0 0 12px; color: var(--sidebar-bg); }
+
+  .etapa { opacity: 0.4; pointer-events: none; }
+  .etapa.ativa { opacity: 1; pointer-events: auto; }
+  .etapa.concluida { opacity: 0.7; }
+
+  .ajuda { color: var(--texto-suave); font-size: 0.85rem; margin: 0 0 12px; }
+
+  .texto-termo {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 12px;
+    background: #fafbff;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+  }
+  .texto-termo p { margin: 0 0 10px; }
+
+  .aceite-termo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+  .aceite-termo input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+  .aceite-termo input:disabled + span { color: var(--texto-suave); font-weight: 400; }
+
+  #signature-pad {
+    width: 100%;
+    height: 160px;
+    border: 2px dashed var(--borda);
+    border-radius: 10px;
+    touch-action: none;
+    background: #fbfbfd;
+  }
+  .acoes-assinatura { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+  .botao {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .botao.primario { width: 100%; background: var(--destaque); color: white; padding: 14px; font-size: 1rem; }
+  .botao.primario:disabled { opacity: 0.5; cursor: not-allowed; }
+  .botao.secundario { background: white; border: 1px solid var(--borda); color: var(--sidebar-bg); }
+
+  .resultado { margin-top: 14px; padding: 12px; border-radius: 10px; font-size: 0.88rem; line-height: 1.5; }
+  .resultado:not(:empty) { background: #e9f9ef; border: 1px solid #b7ecc8; }
+  .resultado code { word-break: break-all; font-size: 0.75rem; }
+
+  ul.lista-itens { padding-left: 18px; margin: 0; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+  <header class="topo">
+    <h1 id="titulo-pagina">📋 Assinatura Digital</h1>
+    <p id="subtitulo-ficha">Carregando...</p>
+  </header>
+
+  <main class="container">
+
+    <div id="carregando" class="cartao">Carregando dados da ficha...</div>
+
+    <div id="conteudo-ficha" style="display:none;">
+
+      <section class="cartao" id="secao-itens" style="display:none;">
+        <h2>Itens a receber</h2>
+        <ul class="lista-itens" id="lista-itens-ficha"></ul>
+      </section>
+
+      <section class="cartao" id="secao-termo" style="display:none;">
+        <h2>TERMO DE RESPONSABILIDADE</h2>
+        <div id="texto-termo" class="texto-termo"></div>
+        <label class="aceite-termo">
+          <input type="checkbox" id="check-aceite" disabled>
+          <span id="texto-aceite">Role o texto acima até o final para liberar o aceite</span>
+        </label>
+      </section>
+
+      <section class="cartao etapa ativa" id="etapa-login">
+        <h2>1. Confirme sua identidade</h2>
+        <p class="ajuda">Entre com a sua conta Google para continuar.</p>
+        <div id="g_id_signin"></div>
+        <p id="status-login" class="ajuda"></p>
+      </section>
+
+      <section class="cartao etapa" id="etapa-biometria">
+        <h2>2. Verificação biométrica</h2>
+        <p class="ajuda">Toque no botão e confirme com sua digital, Face ID ou PIN.</p>
+        <button type="button" id="btn-biometria" class="botao secundario">🔒 Verificar biometria do aparelho</button>
+        <p id="status-biometria" class="ajuda"></p>
+      </section>
+
+      <section class="cartao etapa" id="etapa-assinatura">
+        <h2>3. Assinatura</h2>
+        <p class="ajuda">Assine com o dedo no campo abaixo.</p>
+        <canvas id="signature-pad"></canvas>
+        <div class="acoes-assinatura">
+          <button type="button" id="btn-limpar" class="botao secundario">Limpar</button>
+          <button type="button" id="btn-geo" class="botao secundario">📍 Localização (opcional)</button>
+          <span id="status-geo" class="ajuda"></span>
+        </div>
+      </section>
+
+      <button type="button" id="btn-enviar" class="botao primario" disabled>Concluir e Assinar</button>
+      <div id="resultado" class="resultado"></div>
+    </div>
+
+  </main>
+
+  <script src="assinar.js"></script>
+</body>
+</html>
