@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termos de Uso — FichaEPI</title>
+<style>
+  :root{
+    --bg: #0e1220;
+    --bg-panel: #141a2e;
+    --ink: #e7e9f3;
+    --ink-dim: #9aa1bd;
+    --line: #262e4a;
+    --accent: #7c6fea;
+    --accent-soft: rgba(124,111,234,0.12);
+    --safety: #f5b83d;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(124,111,234,0.16), transparent 60%),
+      radial-gradient(800px 400px at -10% 20%, rgba(245,184,61,0.06), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--accent); text-decoration: none; }
+  a:hover, a:focus-visible{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  header{
+    position: sticky; top:0; z-index: 10;
+    background: rgba(14,18,32,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner{
+    max-width: 920px; margin:0 auto;
+    padding: 18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .brand-mark{
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #4f46c9);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 6px 18px -6px rgba(124,111,234,0.6);
+  }
+  .brand-mark svg{ width:16px; height:16px; }
+  .brand small{
+    display:block; font-family: var(--sans); font-size: 0.68rem;
+    color: var(--ink-dim); font-weight: 500; letter-spacing: 0.03em;
+  }
+  header nav a{
+    font-size: 0.85rem; color: var(--ink-dim); margin-left: 20px;
+  }
+  header nav a:hover{ color: var(--ink); }
+
+  .hero{
+    max-width: 920px; margin: 0 auto;
+    padding: 64px 24px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--safety);
+    background: rgba(245,184,61,0.08);
+    border: 1px solid rgba(245,184,61,0.25);
+    padding: 5px 12px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background: var(--safety);
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2rem, 4.4vw, 2.9rem);
+    line-height: 1.15;
+    margin: 0 0 16px;
+    color: #fff;
+  }
+  .hero p.lede{
+    font-size: 1.05rem;
+    color: var(--ink-dim);
+    max-width: 62ch;
+    margin: 0 0 20px;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap: 10px 28px;
+    font-size: 0.82rem; color: var(--ink-dim);
+    padding-top: 18px; border-top: 1px dashed var(--line);
+  }
+  .meta-row strong{ color: var(--ink); font-weight: 600; }
+
+  .layout{
+    max-width: 920px; margin: 0 auto;
+    padding: 48px 24px 100px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (max-width: 760px){
+    .layout{ grid-template-columns: 1fr; }
+    aside{ display:none; }
+  }
+
+  aside{ position: sticky; top: 90px; }
+  aside .toc-label{
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 14px; font-weight: 600;
+  }
+  aside ol{
+    list-style: none; margin:0; padding:0;
+    counter-reset: toc;
+    border-left: 1px solid var(--line);
+  }
+  aside li{ counter-increment: toc; }
+  aside a{
+    display:block; font-size: 0.83rem; color: var(--ink-dim);
+    padding: 7px 0 7px 16px; margin-left: -1px;
+    border-left: 1px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  aside a::before{
+    content: counter(toc, decimal-leading-zero) "  ";
+    color: var(--accent); font-variant-numeric: tabular-nums;
+    font-weight: 600; margin-right: 2px;
+  }
+  aside a:hover{ color: var(--ink); text-decoration:none; border-left-color: var(--accent); }
+
+  main section{
+    padding-bottom: 34px; margin-bottom: 34px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 90px;
+  }
+  main section:last-child{ border-bottom:none; margin-bottom:0; }
+
+  main h2{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.32rem;
+    color: #fff;
+    display:flex; align-items:baseline; gap:12px;
+    margin: 0 0 14px;
+  }
+  main h2 .num{
+    font-family: var(--sans);
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 3px 8px;
+  }
+  main h3{
+    font-size: 0.95rem; font-weight: 600; color: var(--ink);
+    margin: 22px 0 8px;
+  }
+  main p{ color: #c7cbe0; margin: 0 0 14px; }
+  main ul{ margin: 0 0 14px; padding-left: 20px; color: #c7cbe0; }
+  main li{ margin-bottom: 6px; }
+  main li::marker{ color: var(--accent); }
+
+  .callout{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--safety);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 0.9rem;
+    color: #d8dbec;
+    margin: 4px 0 18px;
+  }
+  .callout strong{ color: #fff; }
+
+  .contact-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    display:flex; align-items:center; gap:18px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .contact-card div p{ margin:0; }
+  .contact-card .contact-name{ color:#fff; font-weight:600; margin-bottom:4px !important; }
+  .contact-card a.btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem; font-weight: 600;
+    white-space: nowrap;
+  }
+  .contact-card a.btn:hover{ background:#8f83ee; text-decoration:none; }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 28px 24px 40px;
+  }
+  footer .footer-inner{
+    max-width: 920px; margin:0 auto;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size: 0.78rem; color: var(--ink-dim);
+  }
+
+  ::selection{ background: rgba(124,111,234,0.35); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9 12l2 2 4-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>FichaEPI<small>Azuris — Soluções em SST</small></span>
+    </div>
+    <nav>
+      <a href="/">Voltar ao site</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">Documento legal</span>
+  <h1>Termos de Uso</h1>
+  <p class="lede">As regras de utilização da plataforma FichaEPI por empresas-clientes e seus usuários autorizados.</p>
+  <div class="meta-row">
+    <span><strong>Operado por:</strong> Azuris - Soluções em SST</span>
+    <span><strong>Última atualização:</strong> 11 de agosto de 2026</span>
+    <span><strong>Contato:</strong> <a href="mailto:fichaepidigital@gmail.com">fichaepidigital@gmail.com</a></span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside>
+    <div class="toc-label">Neste documento</div>
+    <ol>
+      <li><a href="#aceitacao">Aceitação dos termos</a></li>
+      <li><a href="#descricao">Descrição do serviço</a></li>
+      <li><a href="#cadastro">Cadastro e conta</a></li>
+      <li><a href="#uso-adequado">Uso adequado da plataforma</a></li>
+      <li><a href="#dados">Dados inseridos pela empresa-cliente</a></li>
+      <li><a href="#assinatura">Assinatura eletrônica e valor jurídico</a></li>
+      <li><a href="#planos">Planos e cobrança</a></li>
+      <li><a href="#disponibilidade">Disponibilidade do serviço</a></li>
+      <li><a href="#propriedade">Propriedade intelectual</a></li>
+      <li><a href="#responsabilidade">Limitação de responsabilidade</a></li>
+      <li><a href="#encerramento">Encerramento da conta</a></li>
+      <li><a href="#alteracoes">Alterações nos termos</a></li>
+      <li><a href="#lei">Lei aplicável e foro</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ol>
+  </aside>
+
+  <main>
+    <section id="aceitacao">
+      <h2><span class="num">01</span>Aceitação dos termos</h2>
+      <p>Ao acessar ou utilizar o <strong>FichaEPI</strong>, plataforma operada por <strong>Azuris - Soluções em SST</strong>, você declara que leu, entendeu e concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deverá utilizar a plataforma.</p>
+      <p>Caso você esteja aceitando estes termos em nome de uma empresa, declara ter poderes para vinculá-la a este documento.</p>
+    </section>
+
+    <section id="descricao">
+      <h2><span class="num">02</span>Descrição do serviço</h2>
+      <p>O FichaEPI é uma plataforma digital que permite a empresas-clientes:</p>
+      <ul>
+        <li>Cadastrar e gerenciar funcionários</li>
+        <li>Registrar a entrega de Equipamentos de Proteção Individual (EPI)</li>
+        <li>Gerar fichas de entrega e coletar a assinatura eletrônica do funcionário</li>
+        <li>Emitir documentos em PDF como comprovante de entrega</li>
+      </ul>
+      <p>A plataforma é fornecida em regime de <strong>Software como Serviço (SaaS)</strong>, com arquitetura multi-cliente, garantindo que os dados de cada empresa-cliente fiquem isolados dos demais.</p>
+    </section>
+
+    <section id="cadastro">
+      <h2><span class="num">03</span>Cadastro e conta</h2>
+      <p>O acesso à plataforma é feito por meio de autenticação com conta Google. Cada empresa-cliente é responsável por:</p>
+      <ul>
+        <li>Manter a veracidade e atualização das informações cadastradas</li>
+        <li>Controlar quais colaboradores têm acesso administrativo à sua conta</li>
+        <li>Zelar pela segurança do acesso às contas Google vinculadas à plataforma</li>
+      </ul>
+      <div class="callout"><strong>Atenção:</strong> a Azuris não se responsabiliza por acessos indevidos decorrentes de compartilhamento de credenciais ou falhas de segurança na conta Google do usuário.</div>
+    </section>
+
+    <section id="uso-adequado">
+      <h2><span class="num">04</span>Uso adequado da plataforma</h2>
+      <p>Ao usar o FichaEPI, você concorda em não:</p>
+      <ul>
+        <li>Utilizar a plataforma para fins ilícitos ou não autorizados</li>
+        <li>Tentar acessar dados de outra empresa-cliente sem autorização</li>
+        <li>Realizar engenharia reversa, copiar ou tentar burlar mecanismos de segurança do sistema</li>
+        <li>Inserir informações falsas em fichas de entrega de EPI ou em registros de funcionários</li>
+        <li>Sobrecarregar deliberadamente a infraestrutura do serviço</li>
+      </ul>
+    </section>
+
+    <section id="dados">
+      <h2><span class="num">05</span>Dados inseridos pela empresa-cliente</h2>
+      <p>Os dados de funcionários, EPIs e fichas de entrega inseridos na plataforma são de responsabilidade da empresa-cliente, que atua como controladora desses dados nos termos da LGPD. A Azuris atua como operadora, processando esses dados apenas para viabilizar o funcionamento do serviço, conforme detalhado em nossa <a href="politica-de-privacidade.html">Política de Privacidade</a>.</p>
+      <p>Cabe à empresa-cliente garantir que possui base legal adequada para o tratamento dos dados de seus funcionários dentro da plataforma.</p>
+    </section>
+
+    <section id="assinatura">
+      <h2><span class="num">06</span>Assinatura eletrônica e valor jurídico</h2>
+      <p>As fichas de entrega de EPI assinadas eletronicamente pela plataforma têm como objetivo servir de comprovante da entrega do equipamento ao funcionário. A validade jurídica da assinatura eletrônica está sujeita à legislação aplicável (Lei nº 14.063/2020 e Medida Provisória nº 2.200-2/2001, no que forem pertinentes).</p>
+      <p>A empresa-cliente é responsável por avaliar se o método de assinatura eletrônica oferecido pela plataforma atende às exigências específicas do seu setor ou de eventuais fiscalizações.</p>
+    </section>
+
+    <section id="planos">
+      <h2><span class="num">07</span>Planos e cobrança</h2>
+      <p>O modelo de planos e cobrança do FichaEPI encontra-se em definição. Quando aplicável, as condições comerciais (valores, periodicidade, formas de pagamento e política de cancelamento) serão apresentadas à empresa-cliente no momento da contratação e passarão a integrar estes Termos de Uso.</p>
+      <p>Eventuais períodos de teste gratuito, quando oferecidos, terão suas condições específicas informadas previamente ao usuário.</p>
+    </section>
+
+    <section id="disponibilidade">
+      <h2><span class="num">08</span>Disponibilidade do serviço</h2>
+      <p>Envidamos esforços razoáveis para manter a plataforma disponível de forma contínua, mas não garantimos operação ininterrupta ou livre de falhas. Poderão ocorrer interrupções programadas para manutenção ou eventos fora do nosso controle (indisponibilidade de provedores de infraestrutura, como o Google, por exemplo).</p>
+    </section>
+
+    <section id="propriedade">
+      <h2><span class="num">09</span>Propriedade intelectual</h2>
+      <p>O FichaEPI, incluindo seu código, design, marca e funcionalidades, é de propriedade da Azuris - Soluções em SST. Nenhuma disposição destes termos concede à empresa-cliente qualquer direito de propriedade sobre a plataforma, exceto o direito de uso conforme aqui descrito.</p>
+      <p>Os dados inseridos pela empresa-cliente (funcionários, EPIs, fichas) permanecem de propriedade da própria empresa-cliente.</p>
+    </section>
+
+    <section id="responsabilidade">
+      <h2><span class="num">10</span>Limitação de responsabilidade</h2>
+      <p>A plataforma é fornecida "como está". Na máxima extensão permitida pela lei, a Azuris não se responsabiliza por:</p>
+      <ul>
+        <li>Danos indiretos, lucros cessantes ou perda de dados decorrentes do uso ou impossibilidade de uso da plataforma</li>
+        <li>Decisões tomadas pela empresa-cliente com base nas informações registradas no sistema</li>
+        <li>Indisponibilidades causadas por terceiros (provedores de infraestrutura, internet, etc.)</li>
+      </ul>
+    </section>
+
+    <section id="encerramento">
+      <h2><span class="num">11</span>Encerramento da conta</h2>
+      <p>A empresa-cliente pode solicitar o encerramento de sua conta a qualquer momento. A Azuris também pode suspender ou encerrar contas em caso de uso indevido da plataforma, violação destes termos ou inadimplência, quando aplicável, mediante aviso prévio sempre que possível.</p>
+    </section>
+
+    <section id="alteracoes">
+      <h2><span class="num">12</span>Alterações nestes termos</h2>
+      <p>Estes Termos de Uso podem ser atualizados periodicamente. A data da última atualização estará sempre indicada no topo deste documento. O uso continuado da plataforma após alterações relevantes implica concordância com os novos termos.</p>
+    </section>
+
+    <section id="lei">
+      <h2><span class="num">13</span>Lei aplicável e foro</h2>
+      <p>Estes Termos de Uso são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro do domicílio da Azuris - Soluções em SST para dirimir eventuais controvérsias, salvo disposição legal em contrário.</p>
+    </section>
+
+    <section id="contato">
+      <h2><span class="num">14</span>Contato</h2>
+      <p>Em caso de dúvidas sobre estes Termos de Uso, entre em contato:</p>
+      <div class="contact-card">
+        <div>
+          <p class="contact-name">Azuris - Soluções em SST</p>
+          <p>fichaepidigital@gmail.com</p>
+        </div>
+        <a class="btn" href="mailto:fichaepidigital@gmail.com">Enviar e-mail →</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Azuris - Soluções em SST. Todos os direitos reservados.</span>
+    <span>FichaEPI — Gestão digital de EPI</span>
+  </div>
+</footer>
+
+</body>
+</html>
