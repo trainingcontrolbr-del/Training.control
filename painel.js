@@ -141,7 +141,8 @@ async function abrirHistoricoFuncionario(funcionarioId, nomeFuncionario) {
       fetch(`${CONFIG.MASTER_API_URL}?action=logDispositivosTenant&googleIdToken=${encodeURIComponent(googleIdToken)}&funcionarioId=${encodeURIComponent(funcionarioId)}`)
     ]);
     const fichas = await resFichas.json();
-    const logDispositivos = await resLog.json();
+    const logDispositivosBruto = await resLog.json();
+    const logDispositivos = Array.isArray(logDispositivosBruto) ? logDispositivosBruto : [];
 
     let htmlAparelho = '';
     const funcionario = funcionariosCache.find(f => f.id === funcionarioId);
