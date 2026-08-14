@@ -153,8 +153,83 @@ function handleCredentialResponse(response) {
 
 /* ---------------------- ETAPA 2: BIOMETRIA DO APARELHO ---------------------- */
 
+function bufferParaBase64Url_(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binario = '';
+  for (let i = 0; i < bytes.byteLength; i++) binario += String.fromCharCode(bytes[i]);
+  return btoa(binario).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlParaBuffer_(base64url) {
+  const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = base64.length % 4 === 0 ? '' : '='.repeat(4 - (base64.length % 4));
+  const binario = atob(base64 + pad);
+  const bytes = new Uint8Array(binario.length);
+  for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+  return bytes;
+}
+
+async function obterDesafioWebauthn_() {
+  const res = await fetch(CONFIG.MASTER_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'gerarDesafioWebauthn', fichaId, clienteId, funcionarioId: ficha.funcionarioId })
+  });
+  const resultado = await res.json();
+  if (!resultado.success) throw new Error(resultado.error || 'Falha ao gerar desafio');
+  return resultado; // { challenge, credentialId }
+}
+
+let webauthnProva = null; // guarda a prova criptográfica bruta para enviar junto da assinatura
+
+async function cadastrarNovoAparelho_(challengeBuffer) {
+  const userId = new Uint8Array(16);
+  crypto.getRandomValues(userId);
+
+  const credential = await navigator.credentials.create({
+    publicKey: {
+      challenge: challengeBuffer,
+      rp: { name: 'FichaEPI' },
+      user: { id: userId, name: emailLogado, displayName: ficha.funcionarioNome },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+      timeout: 60000
+    }
+  });
+
+  return {
+    credentialId: bufferParaBase64Url_(credential.rawId),
+    clientDataJSON: bufferParaBase64Url_(credential.response.clientDataJSON),
+    attestationObject: bufferParaBase64Url_(credential.response.attestationObject)
+  };
+}
+
+async function confirmarAparelhoCadastrado_(challengeBuffer, credentialIdBase64Url) {
+  const credential = await navigator.credentials.get({
+    publicKey: {
+      challenge: challengeBuffer,
+      allowCredentials: [{ id: base64UrlParaBuffer_(credentialIdBase64Url), type: 'public-key' }],
+      userVerification: 'required',
+      timeout: 60000
+    }
+  });
+
+  return {
+    credentialId: bufferParaBase64Url_(credential.rawId),
+    clientDataJSON: bufferParaBase64Url_(credential.response.clientDataJSON),
+    authenticatorData: bufferParaBase64Url_(credential.response.authenticatorData),
+    signature: bufferParaBase64Url_(credential.response.signature)
+  };
+}
+
 document.getElementById('btn-biometria').addEventListener('click', async () => {
+  await executarBiometria_(false);
+});
+
+async function executarBiometria_(forcarNovoCadastro) {
   const status = document.getElementById('status-biometria');
+  const btn = document.getElementById('btn-biometria');
+
   if (!googleIdToken) {
     status.textContent = '⚠️ Faça login com o Google primeiro.';
     return;
@@ -166,29 +241,41 @@ document.getElementById('btn-biometria').addEventListener('click', async () => {
   }
 
   try {
-    const challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-    const userId = new Uint8Array(16);
-    crypto.getRandomValues(userId);
+    status.textContent = 'Aguardando confirmação no aparelho...';
+    const { challenge: challengeBase64Url, credentialId } = await obterDesafioWebauthn_();
+    const challengeBuffer = base64UrlParaBuffer_(challengeBase64Url);
 
-    await navigator.credentials.create({
-      publicKey: {
-        challenge: challenge,
-        rp: { name: 'FichaEPI' },
-        user: { id: userId, name: emailLogado, displayName: ficha.funcionarioNome },
-        pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
-        timeout: 60000
-      }
-    });
+    if (credentialId && !forcarNovoCadastro) {
+      // Já existe um aparelho cadastrado para este funcionário — exige especificamente ele
+      webauthnProva = await confirmarAparelhoCadastrado_(challengeBuffer, credentialId);
+      status.textContent = '✅ Biometria confirmada (aparelho já cadastrado)';
+    } else {
+      // Primeiro uso, ou recadastro solicitado após troca de aparelho
+      webauthnProva = await cadastrarNovoAparelho_(challengeBuffer);
+      status.textContent = forcarNovoCadastro
+        ? '✅ Novo aparelho cadastrado com sucesso'
+        : '✅ Biometria confirmada (aparelho cadastrado pela primeira vez)';
+    }
 
     biometriaVerificada = true;
-    status.textContent = '✅ Biometria confirmada';
     document.getElementById('etapa-biometria').classList.add('concluida');
+    btn.style.display = 'none';
+    document.getElementById('btn-trocar-aparelho').style.display = 'none';
     liberarEtapaAssinatura_();
   } catch (err) {
-    status.textContent = '⚠️ Não foi possível confirmar (' + err.message + ').';
+    // Erro típico quando o funcionário trocou de aparelho: a credencial cadastrada
+    // não existe neste novo aparelho, então o navegador recusa (NotAllowedError).
+    if (!forcarNovoCadastro) {
+      status.innerHTML = '⚠️ Não reconhecemos este aparelho como o cadastrado para você.';
+      document.getElementById('btn-trocar-aparelho').style.display = 'inline-block';
+    } else {
+      status.textContent = '⚠️ Não foi possível confirmar (' + err.message + ').';
+    }
   }
+}
+
+document.getElementById('btn-trocar-aparelho').addEventListener('click', async () => {
+  await executarBiometria_(true);
 });
 
 function liberarEtapaAssinatura_() {
@@ -281,6 +368,11 @@ document.getElementById('btn-enviar').addEventListener('click', async () => {
     fichaId: fichaId,
     googleIdToken,
     webauthnVerificado: biometriaVerificada,
+    webauthnCredentialId: webauthnProva ? webauthnProva.credentialId : null,
+    webauthnClientDataJSON: webauthnProva ? webauthnProva.clientDataJSON : null,
+    webauthnAttestationObject: webauthnProva ? (webauthnProva.attestationObject || null) : null,
+    webauthnAuthenticatorData: webauthnProva ? (webauthnProva.authenticatorData || null) : null,
+    webauthnSignature: webauthnProva ? (webauthnProva.signature || null) : null,
     assinaturaPng: canvas.toDataURL('image/png'),
     traco: tracoPontos,
     geo: geolocalizacao,
