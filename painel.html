@@ -139,6 +139,10 @@
   .modal-overlay.aberto { display: flex; }
   .modal-conteudo { width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
 
+  .cartao-historico { border: 1px solid var(--borda); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+  .cartao-historico-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .cartao-historico p.ajuda { margin: 2px 0; }
+
   @media (max-width: 900px) {
     .app-shell { flex-direction: column; }
     .sidebar-nova { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; align-items: center; }
@@ -238,8 +242,8 @@
           <h2><i data-lucide="users"></i> Funcionários cadastrados</h2>
           <p class="ajuda">Clique no nome para editar o cadastro.</p>
           <table>
-            <thead><tr><th>Nome</th><th>Cargo</th><th>Status</th></tr></thead>
-            <tbody id="corpo-tabela-funcionarios"><tr><td colspan="3">Carregando...</td></tr></tbody>
+            <thead><tr><th>Nome</th><th>Cargo</th><th>Status</th><th>Assinaturas</th></tr></thead>
+            <tbody id="corpo-tabela-funcionarios"><tr><td colspan="4">Carregando...</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -256,6 +260,16 @@
         </div>
       </div>
     </footer>
+  </div>
+</div>
+
+<div id="modal-historico-funcionario" class="modal-overlay">
+  <div class="modal-conteudo cartao">
+    <h2 id="titulo-historico">Histórico</h2>
+    <div id="corpo-historico"></div>
+    <div style="margin-top:16px;">
+      <button type="button" id="btn-fechar-historico" class="botao secundario">Fechar</button>
+    </div>
   </div>
 </div>
 
