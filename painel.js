@@ -136,38 +136,70 @@ async function abrirHistoricoFuncionario(funcionarioId, nomeFuncionario) {
   document.getElementById('modal-historico-funcionario').classList.add('aberto');
 
   try {
-    const res = await fetch(`${CONFIG.MASTER_API_URL}?action=fichasTenant&googleIdToken=${encodeURIComponent(googleIdToken)}&funcionarioId=${encodeURIComponent(funcionarioId)}`);
-    const fichas = await res.json();
+    const [resFichas, resLog] = await Promise.all([
+      fetch(`${CONFIG.MASTER_API_URL}?action=fichasTenant&googleIdToken=${encodeURIComponent(googleIdToken)}&funcionarioId=${encodeURIComponent(funcionarioId)}`),
+      fetch(`${CONFIG.MASTER_API_URL}?action=logDispositivosTenant&googleIdToken=${encodeURIComponent(googleIdToken)}&funcionarioId=${encodeURIComponent(funcionarioId)}`)
+    ]);
+    const fichas = await resFichas.json();
+    const logDispositivos = await resLog.json();
 
-    if (!fichas.length) {
-      document.getElementById('corpo-historico').innerHTML = '<p class="ajuda">Nenhuma ficha ou termo registrado ainda para este funcionário.</p>';
-      return;
-    }
-
-    // Mais recentes primeiro
-    fichas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
-
-    document.getElementById('corpo-historico').innerHTML = fichas.map(f => {
-      const itens = f.tipo === 'Entrega' ? (JSON.parse(f.itens || '[]').map(i => i.nome).join(', ') || '-') : '-';
-      const dataCriacao = f.criadoEm ? new Date(f.criadoEm).toLocaleString('pt-BR') : '-';
-      const dataAssinatura = f.assinadoEm ? new Date(f.assinadoEm).toLocaleString('pt-BR') : '-';
-      const statusClasse = f.status === 'Assinada' ? 'ativo' : (f.status === 'Cancelada' ? 'inativo' : '');
-      return `
-        <div class="cartao-historico">
-          <div class="cartao-historico-topo">
-            <strong>${f.tipo === 'Termo' ? '📄 Termo de Responsabilidade' : '🦺 Entrega de EPI'}</strong>
-            <span class="badge ${statusClasse}">${f.status}</span>
+    let htmlAparelho = '';
+    const funcionario = funcionariosCache.find(f => f.id === funcionarioId);
+    if (funcionario && funcionario.webauthnCredentialId) {
+      logDispositivos.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
+      const ultimoRegistro = logDispositivos.find(l => l.credentialId === funcionario.webauthnCredentialId);
+      const dataCadastro = ultimoRegistro && ultimoRegistro.dataHora ? new Date(ultimoRegistro.dataHora).toLocaleString('pt-BR') : null;
+      htmlAparelho = `
+        <div class="cartao-aparelho">
+          <div class="cartao-aparelho-topo">🔐 Aparelho biométrico cadastrado</div>
+          ${dataCadastro ? `<p class="ajuda">Cadastrado em: ${dataCadastro}</p>` : ''}
+          <div class="linha-credencial">
+            <code id="texto-credencial">${funcionario.webauthnCredentialId}</code>
+            <button type="button" class="botao secundario botao-pequeno" onclick="copiarCredencial_('${funcionario.webauthnCredentialId}')">Copiar</button>
           </div>
-          ${f.tipo === 'Entrega' ? `<p class="ajuda">Itens: ${itens}</p>` : ''}
-          <p class="ajuda">Criado em: ${dataCriacao}</p>
-          <p class="ajuda">Assinado em: ${dataAssinatura}</p>
-          ${f.pdfUrl ? `<a href="${f.pdfUrl}" target="_blank" class="link-nome">Ver PDF →</a>` : ''}
         </div>
       `;
-    }).join('');
+    } else {
+      htmlAparelho = `<div class="cartao-aparelho cartao-aparelho-vazio">⚪ Nenhum aparelho biométrico cadastrado ainda</div>`;
+    }
+
+    let htmlFichas = '';
+    if (!fichas.length) {
+      htmlFichas = '<p class="ajuda">Nenhuma ficha ou termo registrado ainda para este funcionário.</p>';
+    } else {
+      fichas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+      htmlFichas = fichas.map(f => {
+        const itens = f.tipo === 'Entrega' ? (JSON.parse(f.itens || '[]').map(i => i.nome).join(', ') || '-') : '-';
+        const dataCriacao = f.criadoEm ? new Date(f.criadoEm).toLocaleString('pt-BR') : '-';
+        const dataAssinatura = f.assinadoEm ? new Date(f.assinadoEm).toLocaleString('pt-BR') : '-';
+        const statusClasse = f.status === 'Assinada' ? 'ativo' : (f.status === 'Cancelada' ? 'inativo' : '');
+        return `
+          <div class="cartao-historico">
+            <div class="cartao-historico-topo">
+              <strong>${f.tipo === 'Termo' ? '📄 Termo de Responsabilidade' : '🦺 Entrega de EPI'}</strong>
+              <span class="badge ${statusClasse}">${f.status}</span>
+            </div>
+            ${f.tipo === 'Entrega' ? `<p class="ajuda">Itens: ${itens}</p>` : ''}
+            <p class="ajuda">Criado em: ${dataCriacao}</p>
+            <p class="ajuda">Assinado em: ${dataAssinatura}</p>
+            ${f.pdfUrl ? `<a href="${f.pdfUrl}" target="_blank" class="link-nome">Ver PDF →</a>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('corpo-historico').innerHTML = htmlAparelho + htmlFichas;
   } catch (err) {
     document.getElementById('corpo-historico').innerHTML = '⚠️ Falha ao carregar histórico: ' + err.message;
   }
+}
+
+function copiarCredencial_(valor) {
+  navigator.clipboard.writeText(valor);
+  const btn = event.target;
+  const textoOriginal = btn.textContent;
+  btn.textContent = 'Copiado!';
+  setTimeout(() => { btn.textContent = textoOriginal; }, 1500);
 }
 
 document.getElementById('btn-fechar-historico').addEventListener('click', () => {
