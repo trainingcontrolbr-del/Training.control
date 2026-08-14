@@ -114,7 +114,7 @@ async function carregarFuncionarios() {
   const corpo = document.getElementById('corpo-tabela-funcionarios');
 
   if (!funcionariosCache.length) {
-    corpo.innerHTML = '<tr><td colspan="3">Nenhum funcionário cadastrado ainda.</td></tr>';
+    corpo.innerHTML = '<tr><td colspan="4">Nenhum funcionário cadastrado ainda.</td></tr>';
     return;
   }
 
@@ -123,9 +123,61 @@ async function carregarFuncionarios() {
       <td><button type="button" class="link-nome" onclick="abrirEdicaoFuncionario('${f.id}')">${f.nome}</button></td>
       <td>${f.cargo || '-'}</td>
       <td><span class="badge ${f.status === 'Inativo' ? 'inativo' : 'ativo'}">${f.status || 'Ativo'}</span></td>
+      <td><button type="button" class="link-nome" onclick="abrirHistoricoFuncionario('${f.id}', '${f.nome.replace(/'/g, "\\'")}')">📄 Histórico</button></td>
     </tr>
   `).join('');
 }
+
+/* ---------------------- HISTÓRICO DE ASSINATURAS DO FUNCIONÁRIO (MODAL) ---------------------- */
+
+async function abrirHistoricoFuncionario(funcionarioId, nomeFuncionario) {
+  document.getElementById('titulo-historico').textContent = `Histórico — ${nomeFuncionario}`;
+  document.getElementById('corpo-historico').innerHTML = 'Carregando...';
+  document.getElementById('modal-historico-funcionario').classList.add('aberto');
+
+  try {
+    const res = await fetch(`${CONFIG.MASTER_API_URL}?action=fichasTenant&googleIdToken=${encodeURIComponent(googleIdToken)}&funcionarioId=${encodeURIComponent(funcionarioId)}`);
+    const fichas = await res.json();
+
+    if (!fichas.length) {
+      document.getElementById('corpo-historico').innerHTML = '<p class="ajuda">Nenhuma ficha ou termo registrado ainda para este funcionário.</p>';
+      return;
+    }
+
+    // Mais recentes primeiro
+    fichas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+
+    document.getElementById('corpo-historico').innerHTML = fichas.map(f => {
+      const itens = f.tipo === 'Entrega' ? (JSON.parse(f.itens || '[]').map(i => i.nome).join(', ') || '-') : '-';
+      const dataCriacao = f.criadoEm ? new Date(f.criadoEm).toLocaleString('pt-BR') : '-';
+      const dataAssinatura = f.assinadoEm ? new Date(f.assinadoEm).toLocaleString('pt-BR') : '-';
+      const statusClasse = f.status === 'Assinada' ? 'ativo' : (f.status === 'Cancelada' ? 'inativo' : '');
+      return `
+        <div class="cartao-historico">
+          <div class="cartao-historico-topo">
+            <strong>${f.tipo === 'Termo' ? '📄 Termo de Responsabilidade' : '🦺 Entrega de EPI'}</strong>
+            <span class="badge ${statusClasse}">${f.status}</span>
+          </div>
+          ${f.tipo === 'Entrega' ? `<p class="ajuda">Itens: ${itens}</p>` : ''}
+          <p class="ajuda">Criado em: ${dataCriacao}</p>
+          <p class="ajuda">Assinado em: ${dataAssinatura}</p>
+          ${f.pdfUrl ? `<a href="${f.pdfUrl}" target="_blank" class="link-nome">Ver PDF →</a>` : ''}
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    document.getElementById('corpo-historico').innerHTML = '⚠️ Falha ao carregar histórico: ' + err.message;
+  }
+}
+
+document.getElementById('btn-fechar-historico').addEventListener('click', () => {
+  document.getElementById('modal-historico-funcionario').classList.remove('aberto');
+});
+document.getElementById('modal-historico-funcionario').addEventListener('click', (e) => {
+  if (e.target.id === 'modal-historico-funcionario') {
+    document.getElementById('modal-historico-funcionario').classList.remove('aberto');
+  }
+});
 
 /* ---------------------- EDIÇÃO DE FUNCIONÁRIO (MODAL) ---------------------- */
 
